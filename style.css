@@ -1,0 +1,56 @@
+html {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0px;
+    padding: 0px;
+    height: 100vh;
+    width: 100vw;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    height: 90%;
+    width: 90%;
+}
+
+.pad {
+    display: flex;
+    background-color: violet;
+    height: 70%;
+    width: 100%;
+}
+
+.numbers, .symbols {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.numbers {
+    width: 60%;
+    height: 100%;
+}
+
+.symbols{
+    width: 40%;
+    height: 100%;
+}
+
+.numb {
+    width: 30%;
+    height: 20%;
+}
+
+.symb {
+    width: 45%;
+    height: 30%;
+}
+
+.display {
+    height: 30%;
+    width: 100%;
+    background-color: aqua;
+}
