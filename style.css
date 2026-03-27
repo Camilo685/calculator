@@ -46,11 +46,20 @@ body {
 
 .symb {
     width: 45%;
-    height: 30%;
+    height: 20%;
+}
+
+b {
+    font-size: xx-large;
 }
 
 .display {
+    display: flex;
+    flex-wrap: wrap;
     height: 30%;
     width: 100%;
     background-color: aqua;
+    justify-content: flex-end;
+    align-items: flex-end;
+
 }
