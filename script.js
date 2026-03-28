@@ -114,24 +114,26 @@ function symbolsProcessing(symbString){
             } else if (symbString == "c") clear()
             else if (symbString == "←"){
                 if (expression || tempExpression){
-                    display.textContent = display.textContent.slice(0, -1);
-                    let lastValue = () => {  
-                        if (last == ".") {
-                            currentDot = false;
-                        }
-                        last = tempExpression.slice(-2, -1);
-                        tempExpression = tempExpression.slice(0, -1);
-                        console.log(last); 
-                    }
-                    if (tempExpression) lastValue()
+                    if (reset) clear();
                     else {
-                        let tempPop = expression.pop()
-                        if (tempPop.length == 1){
-                            if (expression){
-                                tempExpression = expression.pop();
-                                last = tempExpression.slice(-1);
-                            } else clear();
-                        } else lastValue;
+                        let lastValue = () => {  
+                            if (last == ".") {
+                                currentDot = false;
+                            }
+                            last = tempExpression.slice(-2, -1);
+                            tempExpression = tempExpression.slice(0, -1);
+                            display.textContent = display.textContent.slice(0, -1);
+                        }
+                        if (tempExpression) lastValue();
+                        else {
+                            let tempPop = expression.pop();
+                            if (tempPop.length == 1){
+                                if (expression){
+                                    tempExpression = expression.pop();
+                                    last = tempExpression.slice(-1);
+                                } else clear();
+                            } else lastValue;
+                        }
                     }
                 }
             } else if(symbString == "."){
