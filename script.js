@@ -13,24 +13,26 @@ function Calculator(){
         "-" : (a, b) => a - b,
         "+" : (a, b) => a + b,
         "x" : (a, b) => a * b,
-        "/" : (a, b) => a / b,
+        "/" : (a, b) => (b != 0) ? a / b : NaN,
     },
     this.calculate = (a, s, b) => this.methods[s](a, b)
 }
 
 function solveExpression (arrayExp){
-    let symbolArray = ["x", "/", "+", "-"];
+    let symbolArray = ["x", "/", "-", "+"];
     let newCalc = new Calculator();
     let result = 0;
     if (arrayExp.length == 1) return arrayExp[0]
     for (let symb of symbolArray){
         while (arrayExp.includes(symb)){
+            console.log(arrayExp);
             let index = arrayExp.indexOf(symb);
             result = newCalc.calculate(
                 +arrayExp[index - 1], 
                 arrayExp[index], 
                 +arrayExp[index + 1]
             );
+            if (result == NaN) return NaN;
             arrayExp.splice(
                 index - 1, 
                 3, 
@@ -69,10 +71,16 @@ function symbolsProcessing(symbString){
         tempExpression = "";
         last = "";
         display.textContent = "";
+        currentDot = false;
+        reset = false;
     }
-    if (last){
+    if (last || symbString == "." || symbString == "-"){
         if (symbString == "+" || symbString == "-" || symbString == "x" || symbString == "/"){
+            if (tempExpression == "NaN") return clear()
             reset = false;
+            // if (symbString == "-" && !expression){
+
+            // }
             if (!isNaN(+last) || last == "."){
                 if (last == ".") {
                     if (tempExpression.length > 1){
@@ -82,6 +90,7 @@ function symbolsProcessing(symbString){
                 } else display.textContent += symbString;
                 expression.push(tempExpression, symbString);
                 tempExpression = "";
+                currentDot = false;
                 
             } else {
                 expression.splice(-1, 1, symbString);
@@ -98,18 +107,21 @@ function symbolsProcessing(symbString){
                     tempExpression = result + "";
                     last = tempExpression.slice(-1);
                     display.textContent = result;
+                    if (tempExpression.includes(".")) currentDot = true;
+                    else currentDot = false;
                     reset = true;
                 }
             } else if (symbString == "c") clear()
             else if (symbString == "←"){
                 if (expression || tempExpression){
                     display.textContent = display.textContent.slice(0, -1);
-                    let lastValue = () => {
+                    let lastValue = () => {  
                         if (last == ".") {
                             currentDot = false;
                         }
-                        last = tempExpression.slice(-1);
+                        last = tempExpression.slice(-2, -1);
                         tempExpression = tempExpression.slice(0, -1);
+                        console.log(last); 
                     }
                     if (tempExpression) lastValue()
                     else {
@@ -123,10 +135,11 @@ function symbolsProcessing(symbString){
                     }
                 }
             } else if(symbString == "."){
+                if (reset) clear()
                 if (!tempExpression || (tempExpression && !currentDot)){
                     last = symbString;
                     tempExpression += last;
-                    display.textContent = last;
+                    display.textContent += last;
                     currentDot = true;
                 } 
             }
