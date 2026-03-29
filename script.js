@@ -2,6 +2,23 @@ let numbers = document.querySelectorAll(".numb");
 let symbols = document.querySelectorAll(".symb");
 let display = document.querySelector("b");
 
+let numKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+let symbKeys = ["+", "-", "x", "/", "c", "=", ".", "←"];
+
+document.addEventListener("keydown", (event) => {
+    let keyName = event.key.toLowerCase();
+    if (keyName == "/") event.preventDefault();
+    else if (keyName == "enter") event.preventDefault();
+    else if (keyName == "backspace") event.preventDefault();
+
+    if (keyName == "*") keyName = "x";
+    else if (keyName == "enter") keyName = "=";
+    else if (keyName == "backspace") keyName = "←";
+
+    if (numKeys.includes(keyName)) numbersProcessing(keyName);
+    else if (symbKeys.includes(keyName)) symbolsProcessing(keyName);
+});
+
 let last = "";
 let tempExpression = "";
 let expression = [];
@@ -54,22 +71,6 @@ function solveExpression (arrayExp){
         }
         symbCounter += 2;
     }
-    // for (let symb of operationSymbols){
-    //     while (arrayExp.includes(symb)){
-    //         let index = arrayExp.indexOf(symb);
-    //         result = newCalc.calculate(
-    //             +arrayExp[index - 1], 
-    //             arrayExp[index], 
-    //             +arrayExp[index + 1]
-    //         );
-    //         if (result == NaN) return NaN;
-    //         arrayExp.splice(
-    //             index - 1, 
-    //             3, 
-    //             result
-    //         );
-    //     }
-    // }
     return result;
 }
 
@@ -171,7 +172,7 @@ function symbolsProcessing(symbString){
                 currentDot = true;
                 last = symbString;
                 tempExpression = symbString;
-                display.textContent = symbString;
+                display.textContent += symbString;
             } else if (symbString == "←"){
                 expression.pop();
                 tempExpression = expression.pop();
@@ -207,6 +208,7 @@ function symbolsProcessing(symbString){
                 if (!isNaN(+tempExpression)){
                     expression.push(tempExpression);
                     let result = solveExpression(expression);
+                    console.log(result);
                     expression.length = 0;
                     tempExpression = result + "";
                     last = tempExpression.slice(-1);
