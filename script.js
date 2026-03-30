@@ -2,9 +2,6 @@ let numbers = document.querySelectorAll(".numb");
 let symbols = document.querySelectorAll(".symb");
 let display = document.querySelector("b");
 
-let numKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
-let symbKeys = ["+", "-", "x", "/", "c", "=", ".", "←"];
-
 document.addEventListener("keydown", (event) => {
     let keyName = event.key.toLowerCase();
     if (keyName == "/") event.preventDefault();
@@ -19,10 +16,22 @@ document.addEventListener("keydown", (event) => {
     else if (symbKeys.includes(keyName)) symbolsProcessing(keyName);
 });
 
+numbers.forEach((but) => but.addEventListener(
+    "click", 
+    (e) => numbersProcessing(e.target.textContent)
+));
+
+symbols.forEach((but) => but.addEventListener(
+    "click", 
+    (e) => symbolsProcessing(e.target.textContent)
+));
+
+let numKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0"];
+let symbKeys = ["+", "-", "x", "/", "c", "=", ".", "←"];
+let operationSymbols = ["x", "/", "-", "+"];
 let last = "";
 let tempExpression = "";
 let expression = [];
-let operationSymbols = ["x", "/", "-", "+"];
 let reset = false;
 let currentDot = false;
 
@@ -74,16 +83,6 @@ function solveExpression (arrayExp){
     return result;
 }
 
-numbers.forEach((but) => but.addEventListener(
-    "click", 
-    (e) => numbersProcessing(e.target.textContent)
-));
-
-symbols.forEach((but) => but.addEventListener(
-    "click", 
-    (e) => symbolsProcessing(e.target.textContent)
-));
-
 function numbersProcessing(numString){
     last = numString;
     if (!reset){
@@ -106,6 +105,20 @@ function symbolsProcessing(symbString){
         reset = false;
     }
 
+    let addToTemp = function (appendTemp = false, appentDisplay = false) {
+        last = symbString;
+        tempExpression = (appendTemp == true ) ? tempExpression + last : last;
+        display.textContent = (appentDisplay == true ) ? display.textContent + last : last;
+    }
+
+    let deleteLast = function (modTemp = true, newTemp = "", displayAppend = false, changeExpression = false) {
+        console.log(changeExpression);
+        if (modTemp) tempExpression = (newTemp) ? newTemp : tempExpression.slice(0, -1);
+        if (changeExpression) expression.splice(-1, 1, symbString);
+        last = tempExpression.slice(-1);
+        display.textContent = (displayAppend) ? display.textContent.slice(0, -1) + symbString : display.textContent.slice(0, -1);
+    }
+
     if (tempExpression == "NaN") clear();
     if (symbString == "c") clear();
     else if (expression.length == 0){
@@ -113,17 +126,14 @@ function symbolsProcessing(symbString){
             if (operationSymbols.includes(symbString)){
                 if (symbString == "-" || symbString == "."){
                     if (symbString == ".") currentDot = true;
-                    last = symbString;
-                    tempExpression = symbString;
-                    display.textContent = symbString;
+                    addToTemp();
                 }
             }
         } else {
             if (operationSymbols.includes(symbString)){
                 if (!isNaN(+tempExpression)){
                     if (last == ".") {
-                        tempExpression = tempExpression.slice(0, -1);
-                        display.textContent = display.textContent.slice(0, -1) + symbString;
+                        deleteLast(true, "", true);
                     } else display.textContent += symbString;
                     expression.push(tempExpression, symbString);
                     tempExpression = "";
@@ -135,17 +145,13 @@ function symbolsProcessing(symbString){
                 if (reset) clear();
                 if (!currentDot) {
                     currentDot = true;
-                    last = symbString;
-                    tempExpression += symbString;
-                    display.textContent += symbString;
+                    addToTemp(true, true);
                 }
             } else if (symbString == "←"){
                 if (reset) clear();
                 else{
                     if (last == ".") currentDot = false;
-                    tempExpression = tempExpression.slice(0, -1);
-                    last = tempExpression.slice(-1);
-                    display.textContent = display.textContent.slice(0, -1);
+                    deleteLast();
                 }
             }
         }
@@ -154,37 +160,28 @@ function symbolsProcessing(symbString){
             if (operationSymbols.includes(symbString)){
                 if (symbString == "-"){
                     if (last == "+"){
-                        expression.splice(-1, 1, symbString);
-                        display.textContent = display.textContent.slice(0, -1) + symbString;
+                        deleteLast(false, "", true, true);
                         last = symbString;
                     }
                     else {
-                        last = symbString;
-                        tempExpression = symbString;
-                        display.textContent += symbString;
+                        addToTemp(false, true);
                     }
                 } else {
-                    expression.splice(-1, 1, symbString);
-                    display.textContent = display.textContent.slice(0, -1) + symbString;
+                    deleteLast(false, "", true, true);
                     last = symbString;
                 }
             } else if (symbString == "."){
                 currentDot = true;
-                last = symbString;
-                tempExpression = symbString;
-                display.textContent += symbString;
+                addToTemp(false, true);
             } else if (symbString == "←"){
                 expression.pop();
-                tempExpression = expression.pop();
-                last = tempExpression.slice(-1);
-                display.textContent = display.textContent.slice(0, -1);
+                deleteLast(true, expression.pop());
             }
         } else{
             if (operationSymbols.includes(symbString)){
                 if (!isNaN(+tempExpression)){
                     if (last == ".") {
-                        tempExpression = tempExpression.slice(0, -1);
-                        display.textContent = display.textContent.slice(0, -1) + symbString;
+                        deleteLast(true, "", true);
                     } else display.textContent += symbString;
                     expression.push(tempExpression, symbString);
                     tempExpression = "";
@@ -195,20 +192,15 @@ function symbolsProcessing(symbString){
             } else if (symbString == "."){
                 if (!currentDot) {
                     currentDot = true;
-                    last = symbString;
-                    tempExpression += symbString;
-                    display.textContent += symbString;
+                    addToTemp(true, true);
                 }
             } else if (symbString == "←"){
                 if (last == ".") currentDot = false;
-                tempExpression = tempExpression.slice(0, -1);
-                last = tempExpression.slice(-1);
-                display.textContent = display.textContent.slice(0, -1);
+                deleteLast()
             } else if (symbString == "="){
                 if (!isNaN(+tempExpression)){
                     expression.push(tempExpression);
                     let result = solveExpression(expression);
-                    console.log(result);
                     expression.length = 0;
                     tempExpression = result + "";
                     last = tempExpression.slice(-1);

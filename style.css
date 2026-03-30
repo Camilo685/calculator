@@ -49,6 +49,10 @@ body {
     height: 20%;
 }
 
+.numb, .symb {
+    font-size: x-large;
+}
+
 b {
     font-size: xx-large;
 }
