@@ -29,8 +29,9 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    align-items: center;
-    gap: 1px;
+    align-content: center;
+    padding: 15px;
+    gap: 3px;
 }
 
 .numbers {
@@ -55,7 +56,11 @@ body {
 
 .numb, .symb {
     font-size: x-large;
+    font-weight: bold;
     border-radius: 20px;
+    border-color: gold;
+    color: blue;
+    flex-grow: 1;
 }
 
 b {

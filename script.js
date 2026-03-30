@@ -80,7 +80,7 @@ function solveExpression (arrayExp){
         }
         symbCounter += 2;
     }
-    return result;
+    return Math.round(result * 10000) / 10000;
 }
 
 function numbersProcessing(numString){
@@ -93,6 +93,7 @@ function numbersProcessing(numString){
         tempExpression = last;
         reset = false;
     }
+    display.scrollTop = display.scrollHeight;
 }
 
 function symbolsProcessing(symbString){
@@ -212,4 +213,5 @@ function symbolsProcessing(symbString){
             }
         }
     }
+    display.scrollTop = display.scrollHeight;
 }
